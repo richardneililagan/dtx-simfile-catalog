@@ -4,6 +4,11 @@ function sanitize {
   echo $(echo $1 | sed 's/\r$//')
 }
 
+# :: gets the immediate containing directory of a path
+function get_dir_context {
+  echo "$(dirname "$(dirname "$1")")"
+}
+
 # :: retrieve a single DTX definition for use with meta
 function get_dtx {
   local dtx
@@ -42,8 +47,18 @@ function get_song_metadata {
 }
 
 # :: get all set.def files
+target_file="./dtxsummary_$(date +%Y%m%d_%s).csv"
+current_dir_context=""
+
+echo $target_file
+
 find . -type f -name "set.def" -print0 | \
 while IFS= read -r -d '' file; do
+  dir_context=$(get_dir_context "$file")
+  if [[ $current_dir_context != $dir_context ]]; then
+    current_dir_context=$dir_context
+    echo "$current_dir_context" >> $target_file
+  fi
   dtx_file=$(get_dtx "$file");
-  get_song_metadata "$dtx_file"
+  echo "$(get_song_metadata "$dtx_file")" >> $target_file
 done
