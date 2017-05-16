@@ -52,6 +52,9 @@ current_dir_context=""
 
 echo $target_file
 
+# :: append UTF8 BOM
+printf '\xEF\xBB\xBF' > $target_file
+
 find . -type f -name "set.def" -print0 | \
 while IFS= read -r -d '' file; do
   dir_context=$(get_dir_context "$file")
@@ -62,3 +65,4 @@ while IFS= read -r -d '' file; do
   dtx_file=$(get_dtx "$file");
   echo "$(get_song_metadata "$dtx_file")" >> $target_file
 done
+
