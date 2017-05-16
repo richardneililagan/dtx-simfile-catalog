@@ -12,8 +12,7 @@ function get_dtx {
     fi
   done <<< "$(iconv -f SHIFT-JIS -t UTF-8 "$set_definition")"
 
-  echo $dtx
-  echo "###"
+  echo "${set_definition/set.def/$dtx}"
 }
 
 # :: get all set.def files
